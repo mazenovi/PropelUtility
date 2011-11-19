@@ -4,7 +4,7 @@ You are at the right place \o/
 
 If you want to contribute to PropelUtility  ...
 ------------
-You should look at this other repo
+You should look at this other repo [https://github.com/mazenovi/PropelUtilityDev](https://github.com/mazenovi/PropelUtilityDev "https://github.com/mazenovi/PropelUtilityDev")
 
 Please PR only on this PropelUtilityDev repo
 
