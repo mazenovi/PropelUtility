@@ -11,6 +11,30 @@ import tempfile
 import binascii
 
 # ElementTree
+
+
+__all__ = [
+    "Comment",
+    "dump",
+    "Element", "ElementTree",
+    "fromstring", "fromstringlist",
+    "iselement", "iterparse",
+    "parse", "ParseError",
+    "PI", "ProcessingInstruction",
+    "QName",
+    "SubElement",
+    "tostring", "tostringlist",
+    "TreeBuilder",
+    "VERSION",
+    "XML",
+    "XMLParser", "XMLTreeBuilder",
+    ]
+
+VERSION = "1.3.0"
+
+
+
+
 class _SimpleElementPath(object):
     def find(self, element, tag, namespaces=None):
         for elem in element:
@@ -31,37 +55,63 @@ class _SimpleElementPath(object):
                 yield elem
     def findall(self, element, tag, namespaces=None):
         return list(self.iterfind(element, tag, namespaces))
+
 try:
     from ElementTree import ElementPath
 except ImportError:
     ElementPath = _SimpleElementPath()
+
+
 class ParseError(SyntaxError):
     pass
+
+
+
 def iselement(element):
     return isinstance(element, Element) or hasattr(element, "tag")
+
+
 class Element(object):
+
+
     tag = None
+
+
     attrib = None
+
+
     text = None
+
+
     tail = None # text after end tag, if any
+
+
     def __init__(self, tag, attrib={}, **extra):
         attrib = attrib.copy()
         attrib.update(extra)
         self.tag = tag
         self.attrib = attrib
         self._children = []
+
     def __repr__(self):
         return "<Element %s at 0x%x>" % (repr(self.tag), id(self))
+
+
     def makeelement(self, tag, attrib):
         return self.__class__(tag, attrib)
+
+
     def copy(self):
         elem = self.makeelement(self.tag, self.attrib)
         elem.text = self.text
         elem.tail = self.tail
         elem[:] = self
         return elem
+
+
     def __len__(self):
         return len(self._children)
+
     def __nonzero__(self):
         warnings.warn(
             "The behavior of this method will change in future versions.  "
@@ -69,20 +119,36 @@ class Element(object):
             FutureWarning, stacklevel=2
             )
         return len(self._children) != 0 # emulate old behaviour, for now
+
+
     def __getitem__(self, index):
         return self._children[index]
+
+
     def __setitem__(self, index, element):
         self._children[index] = element
+
+
     def __delitem__(self, index):
         del self._children[index]
+
+
     def append(self, element):
         self._children.append(element)
+
+
     def extend(self, elements):
         self._children.extend(elements)
+
+
     def insert(self, index, element):
         self._children.insert(index, element)
+
+
     def remove(self, element):
         self._children.remove(element)
+
+
     def getchildren(self):
         warnings.warn(
             "This method will be removed in future versions.  "
@@ -90,26 +156,46 @@ class Element(object):
             DeprecationWarning, stacklevel=2
             )
         return self._children
+
+
     def find(self, path, namespaces=None):
         return ElementPath.find(self, path, namespaces)
+
+
     def findtext(self, path, default=None, namespaces=None):
         return ElementPath.findtext(self, path, default, namespaces)
+
+
     def findall(self, path, namespaces=None):
         return ElementPath.findall(self, path, namespaces)
+
+
     def iterfind(self, path, namespaces=None):
         return ElementPath.iterfind(self, path, namespaces)
+
+
     def clear(self):
         self.attrib.clear()
         self._children = []
         self.text = self.tail = None
+
+
     def get(self, key, default=None):
         return self.attrib.get(key, default)
+
+
     def set(self, key, value):
         self.attrib[key] = value
+
+
     def keys(self):
         return self.attrib.keys()
+
+
     def items(self):
         return self.attrib.items()
+
+
     def iter(self, tag=None):
         if tag == "*":
             tag = None
@@ -118,6 +204,7 @@ class Element(object):
         for e in self._children:
             for e in e.iter(tag):
                 yield e
+
     def getiterator(self, tag=None):
         warnings.warn(
             "This method will be removed in future versions.  "
@@ -125,6 +212,8 @@ class Element(object):
             PendingDeprecationWarning, stacklevel=2
         )
         return list(self.iter(tag))
+
+
     def itertext(self):
         tag = self.tag
         if not isinstance(tag, basestring) and tag is not None:
@@ -136,24 +225,34 @@ class Element(object):
                 yield s
             if e.tail:
                 yield e.tail
+
 _Element = _ElementInterface = Element
+
+
 def SubElement(parent, tag, attrib={}, **extra):
     attrib = attrib.copy()
     attrib.update(extra)
     element = parent.makeelement(tag, attrib)
     parent.append(element)
     return element
+
+
 def Comment(text=None):
     element = Element(Comment)
     element.text = text
     return element
+
+
 def ProcessingInstruction(target, text=None):
     element = Element(ProcessingInstruction)
     element.text = target
     if text:
         element.text = element.text + " " + text
     return element
+
 PI = ProcessingInstruction
+
+
 class QName(object):
     def __init__(self, text_or_uri, tag=None):
         if tag:
@@ -167,15 +266,25 @@ class QName(object):
         if isinstance(other, QName):
             return cmp(self.text, other.text)
         return cmp(self.text, other)
+
+
+
 class ElementTree(object):
+
     def __init__(self, element=None, file=None):
         self._root = element # first node
         if file:
             self.parse(file)
+
+
     def getroot(self):
         return self._root
+
+
     def _setroot(self, element):
         self._root = element
+
+
     def parse(self, source, parser=None):
         if not hasattr(source, "read"):
             source = open(source, "rb")
@@ -188,8 +297,11 @@ class ElementTree(object):
             parser.feed(data)
         self._root = parser.close()
         return self._root
+
+
     def iter(self, tag=None):
         return self._root.iter(tag)
+
     def getiterator(self, tag=None):
         warnings.warn(
             "This method will be removed in future versions.  "
@@ -197,6 +309,8 @@ class ElementTree(object):
             PendingDeprecationWarning, stacklevel=2
         )
         return list(self.iter(tag))
+
+
     def find(self, path, namespaces=None):
         if path[:1] == "/":
             path = "." + path
@@ -207,6 +321,8 @@ class ElementTree(object):
                 FutureWarning, stacklevel=2
                 )
         return self._root.find(path, namespaces)
+
+
     def findtext(self, path, default=None, namespaces=None):
         if path[:1] == "/":
             path = "." + path
@@ -217,6 +333,8 @@ class ElementTree(object):
                 FutureWarning, stacklevel=2
                 )
         return self._root.findtext(path, default, namespaces)
+
+
     def findall(self, path, namespaces=None):
         if path[:1] == "/":
             path = "." + path
@@ -227,6 +345,8 @@ class ElementTree(object):
                 FutureWarning, stacklevel=2
                 )
         return self._root.findall(path, namespaces)
+
+
     def iterfind(self, path, namespaces=None):
         if path[:1] == "/":
             path = "." + path
@@ -237,6 +357,8 @@ class ElementTree(object):
                 FutureWarning, stacklevel=2
                 )
         return self._root.iterfind(path, namespaces)
+
+
     def write(self, file_or_filename,
               encoding=None,
               xml_declaration=None,
@@ -270,15 +392,22 @@ class ElementTree(object):
             serialize(write, self._root, encoding, qnames, namespaces)
         if file_or_filename is not file:
             file.close()
+
     def write_c14n(self, file):
         return self.write(file, method="c14n")
+
+
 def _namespaces(elem, encoding, default_namespace=None):
+
     qnames = {None: None}
+
     namespaces = {}
     if default_namespace:
         namespaces[default_namespace] = ""
+
     def encode(text):
         return text.encode(encoding)
+
     def add_qname(qname):
         try:
             if qname[:1] == "{":
@@ -303,6 +432,7 @@ def _namespaces(elem, encoding, default_namespace=None):
                 qnames[qname] = encode(qname)
         except TypeError:
             _raise_serialization_error(qname)
+
     try:
         iterate = elem.iter
     except AttributeError:
@@ -327,6 +457,7 @@ def _namespaces(elem, encoding, default_namespace=None):
         if isinstance(text, QName) and text.text not in qnames:
             add_qname(text.text)
     return qnames, namespaces
+
 def _serialize_xml(write, elem, encoding, qnames, namespaces):
     tag = elem.tag
     text = elem.text
@@ -373,12 +504,15 @@ def _serialize_xml(write, elem, encoding, qnames, namespaces):
                 write(" />")
     if elem.tail:
         write(_escape_cdata(elem.tail, encoding))
+
 HTML_EMPTY = ("area", "base", "basefont", "br", "col", "frame", "hr",
               "img", "input", "isindex", "link", "meta" "param")
+
 try:
     HTML_EMPTY = set(HTML_EMPTY)
 except NameError:
     pass
+
 def _serialize_html(write, elem, encoding, qnames, namespaces):
     tag = elem.tag
     text = elem.text
@@ -427,16 +561,20 @@ def _serialize_html(write, elem, encoding, qnames, namespaces):
                 write("</" + tag + ">")
     if elem.tail:
         write(_escape_cdata(elem.tail, encoding))
+
 def _serialize_text(write, elem, encoding):
     for part in elem.itertext():
         write(part.encode(encoding))
     if elem.tail:
         write(elem.tail.encode(encoding))
+
 _serialize = {
     "xml": _serialize_xml,
     "html": _serialize_html,
     "text": _serialize_text,
 }
+
+
 def register_namespace(prefix, uri):
     if re.match("ns\d+$", prefix):
         raise ValueError("Prefix format reserved for internal use")
@@ -444,6 +582,7 @@ def register_namespace(prefix, uri):
         if k == uri or v == prefix:
             del _namespace_map[k]
     _namespace_map[uri] = prefix
+
 _namespace_map = {
     "http://www.w3.org/XML/1998/namespace": "xml",
     "http://www.w3.org/1999/xhtml": "html",
@@ -453,15 +592,18 @@ _namespace_map = {
     "http://www.w3.org/2001/XMLSchema-instance": "xsi",
     "http://purl.org/dc/elements/1.1/": "dc",
 }
+
 def _raise_serialization_error(text):
     raise TypeError(
         "cannot serialize %r (type %s)" % (text, type(text).__name__)
         )
+
 def _encode(text, encoding):
     try:
         return text.encode(encoding, "xmlcharrefreplace")
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
+
 def _escape_cdata(text, encoding):
     try:
         if "&" in text:
@@ -473,6 +615,7 @@ def _escape_cdata(text, encoding):
         return text.encode(encoding, "xmlcharrefreplace")
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
+
 def _escape_attrib(text, encoding):
     try:
         if "&" in text:
@@ -488,6 +631,7 @@ def _escape_attrib(text, encoding):
         return text.encode(encoding, "xmlcharrefreplace")
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
+
 def _escape_attrib_html(text, encoding):
     try:
         if "&" in text:
@@ -499,6 +643,9 @@ def _escape_attrib_html(text, encoding):
         return text.encode(encoding, "xmlcharrefreplace")
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
+
+
+
 def tostring(element, encoding=None, method=None):
     class dummy:
         pass
@@ -507,6 +654,8 @@ def tostring(element, encoding=None, method=None):
     file.write = data.append
     ElementTree(element).write(file, encoding, method=method)
     return "".join(data)
+
+
 def tostringlist(element, encoding=None, method=None):
     class dummy:
         pass
@@ -515,6 +664,8 @@ def tostringlist(element, encoding=None, method=None):
     file.write = data.append
     ElementTree(element).write(file, encoding, method=method)
     return data
+
+
 def dump(elem):
     if not isinstance(elem, ElementTree):
         elem = ElementTree(elem)
@@ -522,17 +673,24 @@ def dump(elem):
     tail = elem.getroot().tail
     if not tail or tail[-1] != "\n":
         sys.stdout.write("\n")
+
+
+
 def parse(source, parser=None):
     tree = ElementTree()
     tree.parse(source, parser)
     return tree
+
+
 def iterparse(source, events=None, parser=None):
     if not hasattr(source, "read"):
         source = open(source, "rb")
     if not parser:
         parser = XMLParser(target=TreeBuilder())
     return _IterParseIterator(source, events, parser)
+
 class _IterParseIterator(object):
+
     def __init__(self, source, events, parser):
         self._file = source
         self._events = []
@@ -576,6 +734,7 @@ class _IterParseIterator(object):
                 parser.EndNamespaceDeclHandler = handler
             else:
                 raise ValueError("unknown event %r" % event)
+
     def next(self):
         while 1:
             try:
@@ -595,13 +754,18 @@ class _IterParseIterator(object):
             else:
                 self._index = self._index + 1
                 return item
+
     def __iter__(self):
         return self
+
+
 def XML(text, parser=None):
     if not parser:
         parser = XMLParser(target=TreeBuilder())
     parser.feed(text)
     return parser.close()
+
+
 def XMLID(text, parser=None):
     if not parser:
         parser = XMLParser(target=TreeBuilder())
@@ -613,13 +777,21 @@ def XMLID(text, parser=None):
         if id:
             ids[id] = elem
     return tree, ids
+
+
+
+
 def fromstringlist(sequence, parser=None):
     if not parser:
         parser = XMLParser(target=TreeBuilder())
     for text in sequence:
         parser.feed(text)
     return parser.close()
+
+
+
 class TreeBuilder(object):
+
     def __init__(self, element_factory=None):
         self._data = [] # data collector
         self._elem = [] # element stack
@@ -628,10 +800,13 @@ class TreeBuilder(object):
         if element_factory is None:
             element_factory = Element
         self._factory = element_factory
+
+
     def close(self):
         assert len(self._elem) == 0, "missing end tags"
         assert self._last is not None, "missing toplevel element"
         return self._last
+
     def _flush(self):
         if self._data:
             if self._last is not None:
@@ -643,8 +818,12 @@ class TreeBuilder(object):
                     assert self._last.text is None, "internal error (text)"
                     self._last.text = text
             self._data = []
+
+
     def data(self, data):
         self._data.append(data)
+
+
     def start(self, tag, attrs):
         self._flush()
         self._last = elem = self._factory(tag, attrs)
@@ -653,6 +832,8 @@ class TreeBuilder(object):
         self._elem.append(elem)
         self._tail = 0
         return elem
+
+
     def end(self, tag):
         self._flush()
         self._last = self._elem.pop()
@@ -661,7 +842,10 @@ class TreeBuilder(object):
                    self._last.tag, tag)
         self._tail = 1
         return self._last
+
+
 class XMLParser(object):
+
     def __init__(self, html=0, target=None, encoding=None):
         try:
             from xml.parsers import expat
@@ -701,16 +885,19 @@ class XMLParser(object):
             self.version = "Expat %d.%d.%d" % expat.version_info
         except AttributeError:
             pass # unknown
+
     def _raiseerror(self, value):
         err = ParseError(value)
         err.code = value.code
         err.position = value.lineno, value.offset
         raise err
+
     def _fixtext(self, text):
         try:
             return text.encode("ascii")
         except UnicodeError:
             return text
+
     def _fixname(self, key):
         try:
             name = self._names[key]
@@ -720,6 +907,7 @@ class XMLParser(object):
                 name = "{" + name
             self._names[key] = name = self._fixtext(name)
         return name
+
     def _start(self, tag, attrib_in):
         fixname = self._fixname
         fixtext = self._fixtext
@@ -728,6 +916,7 @@ class XMLParser(object):
         for key, value in attrib_in.items():
             attrib[fixname(key)] = fixtext(value)
         return self.target.start(tag, attrib)
+
     def _start_list(self, tag, attrib_in):
         fixname = self._fixname
         fixtext = self._fixtext
@@ -737,10 +926,13 @@ class XMLParser(object):
             for i in range(0, len(attrib_in), 2):
                 attrib[fixname(attrib_in[i])] = fixtext(attrib_in[i+1])
         return self.target.start(tag, attrib)
+
     def _data(self, text):
         return self.target.data(self._fixtext(text))
+
     def _end(self, tag):
         return self.target.end(self._fixname(tag))
+
     def _comment(self, data):
         try:
             comment = self.target.comment
@@ -748,6 +940,7 @@ class XMLParser(object):
             pass
         else:
             return comment(self._fixtext(data))
+
     def _pi(self, target, data):
         try:
             pi = self.target.pi
@@ -755,6 +948,7 @@ class XMLParser(object):
             pass
         else:
             return pi(self._fixtext(target), self._fixtext(data))
+
     def _default(self, text):
         prefix = text[:1]
         if prefix == "&":
@@ -799,6 +993,8 @@ class XMLParser(object):
                     self._XMLParser__doctype(name, pubid, system[1:-1])
                     self.doctype(name, pubid, system[1:-1])
                 self._doctype = None
+
+
     def doctype(self, name, pubid, system):
         """This method of XMLParser is deprecated."""
         warnings.warn(
@@ -806,12 +1002,17 @@ class XMLParser(object):
             "method on the TreeBuilder target.",
             DeprecationWarning,
             )
+
     __doctype = doctype
+
+
     def feed(self, data):
         try:
             self._parser.Parse(data, 0)
         except self._error, v:
             self._raiseerror(v)
+
+
     def close(self):
         try:
             self._parser.Parse("", 1) # end of data
@@ -820,12 +1021,15 @@ class XMLParser(object):
         tree = self.target.close()
         del self.target, self._parser # get rid of circular references
         return tree
+
 XMLTreeBuilder = XMLParser
+
 try:
     from ElementC14N import _serialize_c14n
     _serialize["c14n"] = _serialize_c14n
 except ImportError:
     pass
+
 
 # PropelForm
 class PropelForm:
@@ -1710,7 +1914,12 @@ class PropelDatabase(PropelObject):
       externalSchemas = []
     for externalSchema in externalSchemas:
       self.externalSchemas.append(PropelExternalSchema(externalSchema, self))
-    
+  
+  def __getattr__(self, name):
+    if re.search('get_', name):
+      if name[4:] == 'name' and self.cache.has_key('name'):
+        return self.cache['name']
+    return super(PropelDatabase, self).__getattr__(name)
   def save(self):
     for k, v in self.cache.iteritems():
       self.wbObject.customData[k] = v
