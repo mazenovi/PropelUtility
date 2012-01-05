@@ -2495,7 +2495,7 @@ class PropelTabExport(PropelTabFile):
   def get_xmlized_schema(self):
     database = Element('database')
     for k, v in PropelDatabase.fields.iteritems():
-      if self.db.cache.has_key(k):
+      if self.db.cache.has_key(k) and self.db.cache[k]:
         database.attrib[k] = self.db.cache[k]
       elif not PropelDatabase.fields[k]['optional']:
         database.attrib[k] = PropelDatabase.fields[k]['default']
