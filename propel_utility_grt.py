@@ -1762,7 +1762,8 @@ class PropelTable(PropelObject):
         self.wbObject.customData[k] = self.cache[k]
     for column in self.columns:
       column.save()
-    self.wbObject.customData['columns'] = pickle.dumps(self.cache['columns'])
+    if self.cache.has_key('columns'):
+      self.wbObject.customData['columns'] = pickle.dumps(self.cache['columns'])
     for foreignKey in self.foreignKeys:
       foreignKey.save()
     if self.cache.has_key('foreign_keys'):
