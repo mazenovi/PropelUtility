@@ -1500,7 +1500,7 @@ class PropelBehavior(PropelObject):
     'alternative_coding_standards':('brackets_newline','remove_closing_comments','use_whitespace','tab_size','strip_comments'),
     'archivable':('archive_on_insert','archive_on_update','archive_on_delete','archive_class','archive_table','archived_at_column','log_archived_at'),
     'auto_add_pk':('name','autoIncrement', 'type'),
-    'delegate':('to'),
+    'delegate': ('to',),
     'i18n':('i18n_columns', 'default_locale', 'locale_column', 'i18n_table', 'i18n_phpname'),
     'nested_set':('left_column', 'right_column', 'level_column', 'use_scope', 'scope_column','method_proxies'),
     'query_cache':('backend', 'lifetime'),
@@ -1636,7 +1636,7 @@ class PropelTable(PropelObject):
     'skipSql':{
       'label':'skipSql',
       'type':mforms.CheckColumnType,
-      'default':0,
+      'default':'0',
       'editable':True,
       'width':100,
       'optional':True
@@ -1644,7 +1644,7 @@ class PropelTable(PropelObject):
     'abstract':{
       'label':'abstract',
       'type':mforms.CheckColumnType,
-      'default':0,
+      'default':'0',
       'editable':True,
       'width':100,
       'optional':True
@@ -1685,7 +1685,7 @@ class PropelTable(PropelObject):
     'heavyIndexing':{
       'label':'heavyIndexing',
       'type':mforms.CheckColumnType,
-      'default':0,
+      'default':'0',
       'editable':True,
       'width':100,
       'optional':True
@@ -1693,7 +1693,7 @@ class PropelTable(PropelObject):
     'readOnly':{
       'label':'readOnly',
       'type':mforms.CheckColumnType,
-      'default':0,
+      'default':'0',
       'editable':True,
       'width':100,
       'optional':True
@@ -1710,7 +1710,7 @@ class PropelTable(PropelObject):
     'reloadOnInsert':{
       'label':'reloadOnInsert',
       'type':mforms.CheckColumnType,
-      'default':0,
+      'default':'0',
       'editable':True,
       'width':100,
       'optional':True
@@ -1718,7 +1718,7 @@ class PropelTable(PropelObject):
     'reloadOnUpdate':{
       'label':'reloadOnUpdate',
       'type':mforms.CheckColumnType,
-      'default':0,
+      'default':'0',
       'editable':True,
       'width':100,
       'optional':True
@@ -1726,7 +1726,7 @@ class PropelTable(PropelObject):
     'allowPkInsert':{
       'label':'allowPkInsert',
       'type':mforms.CheckColumnType,
-      'default':0,
+      'default':'0',
       'editable':True,
       'width':20,
       'optional':True
