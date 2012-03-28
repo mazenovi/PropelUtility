@@ -1649,6 +1649,14 @@ class PropelTable(PropelObject):
       'width':100,
       'optional':True
     },
+    'isCrossRef':{
+      'label':'isCrossRef',
+      'type':mforms.CheckColumnType,
+      'default':'0',
+      'editable':True,
+      'width':100,
+      'optional':True
+    },
     'phpNamingMethod':{
       'label':'phpNamingMethod',
       'type':mforms.StringColumnType,
@@ -2043,6 +2051,7 @@ class PropelTabTables(PropelTabGrid):
     'namespace',
     'skipSql',
     'abstract',
+    'isCrossRef',
     'phpNamingMethod',
     'baseClass',
     'basePeer',
