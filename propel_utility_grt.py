@@ -1299,10 +1299,11 @@ class PropelColumn(PropelObject):
       elif name[4:] == 'scale':
         return self.wbLength2PropelScale()
       elif name[4:] == 'primaryKey':
-        for c in self.wbObject.owner.primaryKey.columns:
-          if c.referencedColumn.name == self.wbObject.name:  
-            return 1
-        return 0
+        if self.wbObject.owner.primaryKey:
+          for c in self.wbObject.owner.primaryKey.columns:
+            if c.referencedColumn.name == self.wbObject.name:  
+              return 1
+          return 0
       elif name[4:] == 'required':
         return self.wbObject.isNotNull
     return super(PropelColumn, self).__getattr__(name)
