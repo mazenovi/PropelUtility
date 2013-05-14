@@ -59,13 +59,38 @@ N.B. it seems that the choices are unavailable on linux.
 
 tabs
 ------------
-* Database can manage attributes for [`<database />`] (http://www.propelorm.org/reference/schema.html#database_element) xml tag  
-* Tables can manage attributes for [`<table />`] (http://www.propelorm.org/reference/schema.html#table_element) xml tag 
-* Columns can manage attributes for [`<column />`] (http://www.propelorm.org/reference/schema.html#column_element) xml tag 
-* Foreign Keys can manage attributes for [`<foreign-key />`] (http://www.propelorm.org/reference/schema.html#foreignkey_element) xml tag 
-* Indices show only attributes for  [`<index />`] (http://www.propelorm.org/reference/schema.html#index_element) et [`<unique/>`] (http://www.propelorm.org/reference/schema.html#unique_element) xml tags
-* Behaviors can manage Behaviors for each table ([`<behavior />`] (http://www.propelorm.org/cookbook/writing-behavior.html) xml tag) and all associated parametrs ([`<parameter />`] ((http://www.propelorm.org/cookbook/writing-behavior.html)) xml tag)
+* Database can manage attributes for [`<database />`](http://www.propelorm.org/reference/schema.html#database_element) xml tag  
+* Tables can manage attributes for [`<table />`](http://www.propelorm.org/reference/schema.html#table_element) xml tag 
+* Columns can manage attributes for [`<column />`](http://www.propelorm.org/reference/schema.html#column_element) xml tag 
+* Foreign Keys can manage attributes for [`<foreign-key />`](http://www.propelorm.org/reference/schema.html#foreignkey_element) xml tag 
+* Indices show only attributes for  [`<index />`](http://www.propelorm.org/reference/schema.html#index_element) et [`<unique/>`](http://www.propelorm.org/reference/schema.html#unique_element) xml tags
+* Behaviors can manage Behaviors for each table ([`<behavior />`](http://www.propelorm.org/cookbook/writing-behavior.html) xml tag) and all associated parameters ([`<parameter />`](http://www.propelorm.org/cookbook/writing-behavior.html) xml tag)
+* Eternal Schemas can manage attributes for [`<external-schema />`](http://propelorm.org/reference/schema.html#external-schema-element) xml tag
 * Export can export data managed with previous tab with this rule: required attributes are always exported, and optional attributes will be exported only if associated value is different from defaut value.
+
+<a id="#extra_behaviors"></a>
+add your custom behaviors
+--------------------------
+in Behaviors tab you can browse to a Python file (*.py) to add extra behaviors : [User-Contributed Behaviors](http://propelorm.org/cookbook/user-contributed-behaviors.html) or your own.
+
+Your Python file should look as 
+
+``` python
+from PropelObject import *
+
+__all__ = ["PropelExtraBehavior"]
+
+VERSION = "1.0.0"
+
+class PropelExtraBehavior(PropelObject):
+
+  behaviors =  {
+    'awesomable':(),
+    'true_inheritance':('extends',)
+  }
+```
+  
+where dict's keys are behaviors name and dict's items are behavrior's parameters
 
 Propel Erase all data
 ================
