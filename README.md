@@ -71,9 +71,9 @@ tabs
 <a id="#extra_behaviors"></a>
 add your custom behaviors
 --------------------------
-in Behaviors tab you can browse to a Python file (*.py) to add extra behaviors : [User-Contributed Behaviors](http://propelorm.org/cookbook/user-contributed-behaviors.html) or your own.
+in Behaviors tab you can browse to a Python file called PropelExtraBehavior.py to add extra behaviors : [User-Contributed Behaviors](http://propelorm.org/cookbook/user-contributed-behaviors.html) or your own.
 
-Your Python file should look as 
+Your PropelExtraBehavior.py file should look as 
 
 ``` python
 from PropelObject import *
