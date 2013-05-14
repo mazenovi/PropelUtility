@@ -2453,7 +2453,7 @@ class PropelTabBehaviors(PropelTabGrid):
     browse.set_text("Browse")
     browse.add_clicked_callback(lambda: self.browse_schema())
     tBox.add(browse, False, True)
-    label = mforms.newLabel("see http://m4z3.me/extra_behaviors for details")
+    label = mforms.newLabel("see http://m4z3.me/extrabehaviors for details")
     tBox.add(label, False, True)
     self.add_end(tBox, False, True)
   def browse_schema(self):

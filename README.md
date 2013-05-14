@@ -90,7 +90,7 @@ class PropelExtraBehavior(PropelObject):
   }
 ```
   
-where dict's keys are behaviors name and dict's items are behavrior's parameters
+where dict's keys are behavior's name and dict's items are behavior's parameters
 
 Propel Erase all data
 ================
